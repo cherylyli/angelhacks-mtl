@@ -33,14 +33,28 @@ module.exports = function(app) {
         });
     })
     
-    //find all the nearby packs
-    app.post('/sendHowl', function(req, res){
+    //find all the nearby packs, send username
+    app.post('/join', function(req, res){
     	//find the location of the user sending the request
-    	User.find({username: req.body.username}, function(err, profile){
+    	User.findOne({username: req.body.username}, function(err, profile){
     		if (err) throw err;
+    		profile.packName = req.body.packName;
+    		profile.save(function(err){
+    		    if (err) throw err;
+    		});
     		console.log(profile);
     	});
-        var packQuery = Pack;
+        Pack.findOne({packName: req.body.packName}, function(err, pack){
+            if (err) throw err;
+            pack.packUsers.push(req.body.username);
+            pack.save(function(err){
+                if (err) throw err;
+                res.send("success");
+            })
+            console.log("Cheryl sent this request: " + pack + "end of cheryl stuff");
+        });
+        
+        
         
     });
     

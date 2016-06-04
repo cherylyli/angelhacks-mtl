@@ -19,7 +19,9 @@ module.exports = function(app) {
                     var newUser = User ({
                         username: req.body.username,
                         locationLong: req.body.locationLong,
-                        locationLat: req.body.locationLat
+                        locationLat: req.body.locationLat,
+                        packName: req.body.packName,
+                        interest: req.body.interest
                     });
             
                     newUser.save(function(err){
