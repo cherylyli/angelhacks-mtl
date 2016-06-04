@@ -33,8 +33,10 @@ module.exports = function(app) {
             res.end("error");
         }
     });
+
+
     
-    app.post('/login', function(req, res, next){
+    app.post('/login', function(req, res){
         //confirm with database username exists
         User.find({username: req.body.username}, function(err, existingProf){
             if (err) throw err;
@@ -46,9 +48,17 @@ module.exports = function(app) {
         });
     });
     
-    app.post('/sendHowl', function(req, res, next){
+    app.post('/location', function(req, res){
+        var query = {username: req.body.username};
         
+        User.findOneAndUpdate(query, {$set:{locationLong: req.body.long, locationLat: req.body.lat}}, {new: true}, function(err, data){
+            if (err) throw err;
+            res.end("success");
+            console.log(data);
+        });
         
     });
+    
+
     
 };
