@@ -1,6 +1,6 @@
 //angelhack-mtl-cherylyli.c9users.io/initPack
 var User = require('../models/User.model');
-var Pack = require('../models/pack.model');
+var Pack = require('../models/Pack.model');
 var bodyParser = require('body-parser');
 
 
@@ -11,6 +11,7 @@ module.exports = function(app) {
     app.post('/initPack', function(req, res){
     	var longitude;
     	var latitude;
+    	console.log(req.body.username + req.body.packName);
     	User.find({username: req.body.username}, function(err, profile){
     		if (err) throw err;
     		longitude = profile[0].locationLong;
@@ -32,7 +33,7 @@ module.exports = function(app) {
         });
     })
     
-    
+    //find all the nearby packs
     app.post('/sendHowl', function(req, res){
     	//find the location of the user sending the request
     	User.find({username: req.body.username}, function(err, profile){

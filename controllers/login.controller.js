@@ -50,6 +50,7 @@ module.exports = function(app) {
     
     app.post('/location', function(req, res){
         var query = {username: req.body.username};
+        console.log(req.body.username + ' ' + req.body.long);
         
         User.findOneAndUpdate(query, {$set:{locationLong: req.body.long, locationLat: req.body.lat}}, {new: true}, function(err, data){
             if (err) throw err;
