@@ -5,7 +5,8 @@ var userSchema = new Schema({
    username: String,
    locationLong: Number,
    locationLat: Number,
-   packName: String
+   packName: String,
+   interest: [String]
 });
 var User = mongoose.model("User", userSchema);
 
