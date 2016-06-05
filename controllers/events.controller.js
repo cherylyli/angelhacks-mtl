@@ -12,36 +12,66 @@ module.exports = function(app) {
         app.use(bodyParser.urlencoded({extended:false}));
         app.use(bodyParser.json());
         var eventList = {};
+        var city;
+
         
             
-    // http://terminal2.expedia.com/x/activities/search?location=London&startDate=2016-03-08&endDate=2016-03-18&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM
-    var city = "Montreal";
-    var dateBegin = "2016-06-05";
-    var dateEnd = "2016-06-15";
+ 
+        var dateBegin = "2016-06-05";
+        var dateEnd = "2016-06-15";
     
-    var expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + city + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
-    
-    request('http://www.google.com', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body) // Print the google web page.
-        }
-    });
+        var expediaString = "";
+        var expediaStuff = "";
 
-        User.find({username: req.body.username}, function(err, prof){
+        User.findOne({username: req.body.username}, function(err, prof){
             if (err) throw err;
             var lat = prof.locationLat;
             var long = prof.locationLong;
+            var userInterests = prof.interest[0];
+            console.log(prof);
+            console.log(lat);
+            console.log(userInterests);
+            
+            //var googleString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+        
+            var googleString="https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452";
+                request(googleString, function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        var jbody=JSON.parse(body);
+                        city=jbody["results"][0]["address_components"][3]["long_name"];
+                        console.log(city);
+                    }
+                });
             
             
+            //get location from Eilon
+            expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + city + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
             
+            request(expediaString, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    var jsonBody = JSON.parse(body);
+                    expediaStuff = jsonBody.activities;
+                    var searchActivityList = [];
+                    expediaStuff.forEach(function(item){
+                        
+                        
+                    });
+                    //console.log(expediaStuff);
+                    res.send(body); // Print the google web page.
+                }
+            });
             
         });
-        
-       
-        
+    
     });
  
- 
+   
+} //end module.exports
+
+
+//activityList is a list of all the acitivities from expedia API
+//userInterests is a list of all the interests of the user
+function filterExpedia(activityList, userInterests) {
     
 }
 
