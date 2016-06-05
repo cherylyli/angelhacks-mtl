@@ -8,7 +8,7 @@ module.exports = function(app) {
     //get a user's list of interests and send them back
     //req: username
     //res: get long & lat and feed to Eilon's function
-    app.post('/getevent', function(req, res){
+    app.post('/getevents', function(req, res){
         app.use(bodyParser.urlencoded({extended:false}));
         app.use(bodyParser.json());
         var city;
@@ -53,7 +53,9 @@ module.exports = function(app) {
                     expediaStuff.forEach(function(item){
                         var temp = {
                             title: item.title,
-                            categories: item.categories
+                            categories: item.categories,
+                            latlng: item.latLng,
+                            imageUrl: item.imageUrl
                         };
                         eventList.push(temp);
                     });
@@ -76,7 +78,13 @@ module.exports = function(app) {
                                     userInterests.forEach(function(individualTrait){
                                         if(trait === individualTrait){
                                             //console.log(separateEvent);
-                                            matchedEvents.push(separateEvent.title);
+                                            var temp = {
+                                                title: separateEvent.title,
+                                                categories: separateEvent.categories,
+                                                latlng: separateEvent.latlng,
+                                                imageUrl: separateEvent.imageUrl.substr(2, separateEvent.imageUrl.length-1)
+                                            }
+                                            matchedEvents.push(temp);
                                         }
                                     });
                                 });
@@ -86,7 +94,7 @@ module.exports = function(app) {
                     });
                     
                     for (var i=0; i<matchedEvents.length -1; i++){
-                        if (matchedEvents[i] === matchedEvents[i+1]){
+                        if (matchedEvents[i].title === matchedEvents[i+1].title){
                             matchedEvents.splice(i, 1);
                         }
                     }
@@ -100,13 +108,7 @@ module.exports = function(app) {
     
     });
  
+
+    //get landmarks?
    
 } //end module.exports
-
-
-//activityList is a list of all the acitivities from expedia API
-//userInterests is a list of all the interests of the user
-function filterExpedia(activityList, userInterests) {
-    
-}
-
