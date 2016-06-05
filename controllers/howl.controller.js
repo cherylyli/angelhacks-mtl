@@ -58,27 +58,36 @@ module.exports = function(app) {
         
     });
     app.post('/sendHowl', function(req,res){    	//find the location of the user sending the request
-    	User.find({username: req.body.username}, function(err, profile){
+    	User.findOne({username: req.body.username}, function(err, profile){
     		if (err) throw err;
     		console.log(profile);
+    		//console.log(profile.locationLat);
     		var closePacks = [];
 	        var packStream = Pack.find().stream();
 	        var finished=false;
 	        packStream.on('data', function (doc) {
-	        	var lat1;//=doc.locationLat;
-	        	var long1;//=doc.locationLong;
+	        	var lat1=profile.locationLat;
+	        	var long1=profile.locationLong;
+	        	//console.log(lat1);
+	        	//console.log(long1);
 	        	User.findOne({username: doc.packUsers[0]}, function (err,profile){
 	        		if (err) throw err;
 	        		console.log("Pack Leader: " + profile);
-	        		lat1=profile.locationLat;
-	        		long1=profile.locationLong;
+	        		//lat1=profile.locationLat;
+	        		//long1=profile.locationLong;
 	        		var lat2=profile.locationLat;
 		        	var long2=profile.locationLong;
 		        	console.log(lat1);
 		        	console.log(long1);
+		        	console.log(lat2);
+		        	console.log(long2);
 		        	var dist=getDistanceFromLatLonInKm(lat1,long1,lat2,long2);
-		        	if (dist<2.00){
-		        		closePacks.push(doc);
+		        	console.log("dist: "+dist);
+		        	if (dist<20000.00){
+		        		locatedPack={Pack:doc, locationLat:lat2, locationLong:long2};
+
+		        		closePacks.push(locatedPack);
+
 		        		console.log("ADDED with distance "+ dist);
 		        		console.log(doc);
 		        	}
