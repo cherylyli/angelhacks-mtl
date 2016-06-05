@@ -77,7 +77,7 @@ module.exports = function(app) {
 	        	//console.log(lat1);
 	        	//console.log(long1);
 	        	User.findOne({username: doc.packUsers[0]}, function (err,profile){
-	        		if (err) throw err;
+	        		if (err || profile==null) throw err;
 	        		console.log("Pack Leader: " + profile);
 	        		//lat1=profile.locationLat;
 	        		//long1=profile.locationLong;
