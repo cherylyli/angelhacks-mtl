@@ -109,6 +109,34 @@ module.exports = function(app) {
     });
  
 
+
     //get landmarks?
-   
+    app.post('/getlandmarks', function(req, res){
+        app.use(bodyParser.urlencoded({extended:false}));
+        app.use(bodyParser.json());
+
+        
+        expediaString = "http://terminal2.expedia.com/x/geo/features?bbox=-73.5%2C45.5%2C-73.4%2C45.6&apikey=KUVM9bYwlPT0t0dQw8ro7ue6BGfhAL84";
+        
+            var landmarkList = [];
+            request(expediaString, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    var jsonBody = JSON.parse(body);
+                    //expediaStuff = jsonBody.activities;
+                    //each item: access title & categories & push!
+                    jsonBody.forEach(function(item){
+                        var temp = {
+                            name: item.name,
+                            locationLong: item.position.coordinates[0],
+                            locationLat: item.position.coordinates[1]
+                        };
+                        landmarkList.push(temp);
+                    });
+                    res.send(landmarkList);
+                    //res.send(eventList);
+                    
+                }
+            });
+
+    });
 } //end module.exports
