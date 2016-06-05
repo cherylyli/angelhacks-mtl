@@ -87,7 +87,7 @@ module.exports = function(app) {
 		        	console.log("dist: "+dist);
 		        	if (dist<20000.00){
 		        		locatedPack={Pack:doc, locationLat:lat2, locationLong:long2};
-
+//
 		        		closePacks.push(locatedPack);
 
 		        		console.log("ADDED with distance "+ dist);
