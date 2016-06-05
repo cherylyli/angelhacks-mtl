@@ -1,7 +1,7 @@
 var User = require('../models/User.model');
 var bodyParser = require('body-parser');
-var http = require('http');
 var request = require('request');
+var matching = require('../config/events.json');
 
 module.exports = function(app) {
     
@@ -11,53 +11,88 @@ module.exports = function(app) {
     app.post('/getevent', function(req, res){
         app.use(bodyParser.urlencoded({extended:false}));
         app.use(bodyParser.json());
-        var eventList = {};
         var city;
-
-        
-            
- 
-        var dateBegin = "2016-06-05";
-        var dateEnd = "2016-06-15";
+        var dateBegin = "2016-06-03";
+        var dateEnd = "2016-06-25";
     
         var expediaString = "";
         var expediaStuff = "";
 
+        //find a user and extract his/her location & interests
+        //go to google to find city from location
+        
         User.findOne({username: req.body.username}, function(err, prof){
             if (err) throw err;
+            
+            //get longitutide/latitude & get city name; get suggested events from expedia
+            //go to google to find city from location
+            //var googleString="https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452";
             var lat = prof.locationLat;
             var long = prof.locationLong;
-            var userInterests = prof.interest[0];
-            console.log(prof);
-            console.log(lat);
-            console.log(userInterests);
-            
-            //var googleString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+            var googleString = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + long + ',' + lat;
+            request(googleString, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    var jbody = JSON.parse(body);
+                    //city=jbody["results"][0]["address_components"][4]["long_name"];
+                        //console.log(city);
+                }
+            });
         
-            var googleString="https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452";
-                request(googleString, function (error, response, body) {
-                    if (!error && response.statusCode == 200) {
-                        var jbody=JSON.parse(body);
-                        city=jbody["results"][0]["address_components"][3]["long_name"];
-                        console.log(city);
-                    }
-                });
-            
-            
             //get location from Eilon
-            expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + city + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
+            expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + "Montreal" + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
             
+            //userInterests: an array of the interests of the user
+            var userInterests = prof.interest[0].substr(1, prof.interest[0].length-2).split(', ');
+            
+            var eventList = [];
             request(expediaString, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                     var jsonBody = JSON.parse(body);
                     expediaStuff = jsonBody.activities;
-                    var searchActivityList = [];
+                    //each item: access title & categories & push!
                     expediaStuff.forEach(function(item){
-                        
-                        
+                        var temp = {
+                            title: item.title,
+                            categories: item.categories
+                        };
+                        eventList.push(temp);
                     });
-                    //console.log(expediaStuff);
-                    res.send(body); // Print the google web page.
+                    //res.send(eventList);
+                    
+                    var matchedEvents=[];
+                    //console.log(userInterests);
+                    //console.log(matching);
+                    
+                    //for each item in eventList, use the categories to index into "matching" 
+                    //if user has an interest mapped to that index, then push into matchedEvents
+                    //then remove repeats
+                    eventList.forEach(function(separateEvent){
+                       separateEvent.categories.forEach(function(cat){
+                            var list = matching[cat];
+                            //console.log(cat + ": " + list + " type " + typeof list);
+                            if (list !== null && list !== undefined){
+
+                                list.forEach(function(trait){
+                                    userInterests.forEach(function(individualTrait){
+                                        if(trait === individualTrait){
+                                            //console.log(separateEvent);
+                                            matchedEvents.push(separateEvent.title);
+                                        }
+                                    });
+                                });
+                            }
+                           
+                       });
+                    });
+                    
+                    for (var i=0; i<matchedEvents.length -1; i++){
+                        if (matchedEvents[i] === matchedEvents[i+1]){
+                            matchedEvents.splice(i, 1);
+                        }
+                    }
+
+                    res.send(matchedEvents);
+                    
                 }
             });
             

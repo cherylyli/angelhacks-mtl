@@ -1,14 +1,15 @@
 {
-"Tours & Sightseeing": "[adventure, general tourist]",
-"Attractions": "[general tourist]",
-"Sightseeing Passes": "[general tourist, outdoor]",
-"Hop-on Hop-off": "[general tourist, adventure]",
-"Walking & Bike Tours": "[adventure, outdoor]",
-"Cruises & Water Tours": "[romance, outdoor]",
-"Food & Drink": "[local-cuisine, fine-dining]",
-"Day Trips & Excursions": "[general tourist, adventure]",
-"Tours & Sightseeing": "[general tourist]",
-"Water Activities": "[adventure, outdoor]",
-"Private Tours": "[romance, fine-dining, general tourist]",
-"Private Transfers": "[romance]"
+"Tours & Sightseeing": ["adventure", "general tourist"],
+"Attractions": ["general tourist", "outdoor"],
+"Sightseeing Passes": ["general tourist", "outdoor"],
+"Hop-on Hop-off": ["general tourist", "adventure"],
+"Walking & Bike Tours": ["adventure", "outdoor"],
+"Cruises & Water Tours": ["romance", "outdoor"],
+"Food & Drink": ["local-cuisine", "fine-dining"],
+"Day Trips & Excursions": ["general tourist", "adventure"],
+"Water Activities": ["adventure", "outdoor"],
+"Private Tours": ["romance", "fine-dining", "general tourist"],
+"Private Transfers": ["romance", "luxury"],
+"Adventures": ["adventure", "outdoor"],
+"Spa": ["luxury", "romance"]
 }

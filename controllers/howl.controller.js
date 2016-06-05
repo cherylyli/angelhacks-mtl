@@ -8,6 +8,7 @@ module.exports = function(app) {
     app.use(bodyParser.urlencoded({extended:false}));
     app.use(bodyParser.json());
 
+	
     app.post('/initPack', function(req, res){
     	var longitude;
     	var latitude;
@@ -61,7 +62,10 @@ module.exports = function(app) {
     
     app.post('/sendHowl', function(req,res){    	//find the location of the user sending the request
     	User.findOne({username: req.body.username}, function(err, profile){
-    		if (err) throw err;
+    		if (err || profile == null) {
+    			res.status(500).send(err);
+    			return;
+    		}
     		console.log(profile);
     		//console.log(profile.locationLat);
     		var closePacks = [];
@@ -83,12 +87,14 @@ module.exports = function(app) {
 		        	console.log(long1);
 		        	console.log(lat2);
 		        	console.log(long2);
+		        	doc.locationLat = lat2;
+		        	doc.locationLong = long2;
 		        	var dist=getDistanceFromLatLonInKm(lat1,long1,lat2,long2);
 		        	console.log("dist: "+dist);
 		        	if (dist<20000.00){
-		        		locatedPack={Pack:doc, locationLat:lat2, locationLong:long2};
+		        		//locatedPack={Pack:doc, locationLat:lat2, locationLong:long2};
 //
-		        		closePacks.push(locatedPack);
+		        		closePacks.push(doc);
 
 		        		console.log("ADDED with distance "+ dist);
 		        		console.log(doc);
@@ -134,7 +140,7 @@ module.exports = function(app) {
             if (err) throw err;
             console.log(profile.packName);
             if (profile.packName === "") {
-            	res.end(responseObject);
+            	res.send(responseObject);
             } else {
             	responseObject.packName = profile.packName;
             	console.log(responseObject.packName);
@@ -181,5 +187,5 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
 }
 
 function deg2rad(deg) {
-  return deg * (Math.PI/180)
+  return deg * (Math.PI/180);
 }
