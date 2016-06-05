@@ -7,6 +7,7 @@ var config = require('./config/index');
 var mongoose = require('mongoose');
 var howlController = require('./controllers/howl.controller.js');
 var loginController = require('./controllers/login.controller.js');
+var eventController = require('./controllers/events.controller.js');
 
 
 mongoose.connect(config.getDBConnectionString());
@@ -17,6 +18,7 @@ app.get('/', function(req, res){
 
 howlController(app);
 loginController(app);
+eventController(app);
 
 process.env.PORT = process.env.PORT || 80;
 
