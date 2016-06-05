@@ -21,15 +21,11 @@ module.exports = function(app) {
     
     var expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + city + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
     
-    request.post(
-        'http://www.yoursite.com/formpage',
-        { form: { key: 'value' } },
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body)
-            }
+    request('http://www.google.com', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body) // Print the google web page.
         }
-    );
+    });
 
         User.find({username: req.body.username}, function(err, prof){
             if (err) throw err;
