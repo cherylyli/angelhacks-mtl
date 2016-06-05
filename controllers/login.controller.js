@@ -57,7 +57,7 @@ module.exports = function(app) {
         User.findOneAndUpdate(query, {$set:{locationLong: req.body.long, locationLat: req.body.lat}}, {new: true}, function(err, data){
             if (err) throw err;
             res.end("success");
-            console.log(data);
+            
         });
         
     });
