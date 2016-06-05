@@ -57,6 +57,8 @@ module.exports = function(app) {
         
         
     });
+    
+    
     app.post('/sendHowl', function(req,res){    	//find the location of the user sending the request
     	User.find({username: req.body.username}, function(err, profile){
     		if (err) throw err;
@@ -104,7 +106,53 @@ module.exports = function(app) {
 	        
     	});
 	});
-
+	
+	
+	//if user has no pack, returns false for hasPack
+	//if user has pack, returns packName, packMembers, Longitutude and Latitude of pack
+	//should we also send back how far the pack is from the user and in what direction?
+	app.post('/whichPack', function(req, res){
+		//responseObject: hasPack
+		var responseObject = {
+			hasPack: false,
+			packName: "",
+			packDescription: "",
+			packMembers: [],
+			packLong: 0,
+			packLat: 0
+		};
+        User.findOne({username: req.body.username}, function(err, profile){
+            if (err) throw err;
+            console.log(profile.packName);
+            if (profile.packName === "") {
+            	res.end(responseObject);
+            } else {
+            	responseObject.packName = profile.packName;
+            	console.log(responseObject.packName);
+            	//if user is in a pack, then send back the users in the pack and where the pack is
+            	Pack.findOne({packName: responseObject.packName}, function(err, pack){
+            		if (err) throw err;
+            		console.log(pack);
+            		console.log(profile);
+    				responseObject.hasPack = true;
+            		responseObject.packName = pack.packName;
+            		responseObject.packDescription = pack.packDescription;
+            		responseObject.packMembers = pack.packUsers;
+            		var leader = pack.packUsers[0];
+            		console.log("this is the pack's leader: " + leader);
+            		User.findOne({username: leader}, function(err, packLeader) {
+            		 	if (err) throw err;
+            		 	console.log("this is the pack's leader's info:" + packLeader);
+            		    responseObject.packLong = packLeader.locationLong;
+            		    responseObject.packLat = packLeader.locationLat;
+            			res.send(responseObject);    
+            		 });
+            	});
+            }
+            
+        }); // end User.findOne
+    });
+	
     
     
 };
