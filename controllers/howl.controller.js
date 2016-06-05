@@ -93,8 +93,11 @@ module.exports = function(app) {
 		        	console.log("dist: "+dist);
 		        	if (dist<20000.00){
 		        		//locatedPack={Pack:doc, locationLat:lat2, locationLong:long2};
-//
-		        		closePacks.push(doc);
+						//closePacks.push(locatedPack);
+		        		//closePacks.push(doc);
+						doc.locationLat=lat2;
+						doc.locationLong=long2;
+						closePacks.push(doc);
 
 		        		console.log("ADDED with distance "+ dist);
 		        		console.log(doc);
@@ -168,6 +171,30 @@ module.exports = function(app) {
         }); // end User.findOne
     });
 	
+	
+	//given packName, find packInfo
+    app.post('/packInfo', function(req, res){
+    	Pack.findOne({packName : req.body.packName}, function(err, pack){
+    		if (err) throw err;
+    		var long;
+    		var lat;
+    		// User.findOne({username: pack.packUser[0]}, function(err, user){
+    		// 	if (err) throw err;
+    		// 	long = user.locationLong;
+    		// 	lat = user.locationLat;
+    		// });
+    		var returnObj = {
+    			packName: pack.packName,
+    			packDescription: pack.packDescription,
+    			packUser: pack.packUser,
+    			packEvents: pack.packEvents
+    			// packLong: long,
+    			// packLat: lat
+    		};
+    		res.send(returnObj);
+    	});
+    });
+    
     
     
 };
