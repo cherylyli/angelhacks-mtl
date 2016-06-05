@@ -1,6 +1,7 @@
 var User = require('../models/User.model');
 var bodyParser = require('body-parser');
 var http = require('http');
+var request = require('request');
 
 module.exports = function(app) {
     
@@ -11,6 +12,24 @@ module.exports = function(app) {
         app.use(bodyParser.urlencoded({extended:false}));
         app.use(bodyParser.json());
         var eventList = {};
+        
+            
+    // http://terminal2.expedia.com/x/activities/search?location=London&startDate=2016-03-08&endDate=2016-03-18&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM
+    var city = "Montreal";
+    var dateBegin = "2016-06-05";
+    var dateEnd = "2016-06-15";
+    
+    var expediaString = "http://terminal2.expedia.com/x/activities/search?location=" + city + "&startDate=" + dateBegin + "&endDate=" + dateEnd + "&apikey=OyqiPO5H2iY44KgRbvrgp5rnQdmLthxM";
+    
+    request.post(
+        'http://www.yoursite.com/formpage',
+        { form: { key: 'value' } },
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log(body)
+            }
+        }
+    );
 
         User.find({username: req.body.username}, function(err, prof){
             if (err) throw err;
